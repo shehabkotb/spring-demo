@@ -2,7 +2,7 @@ package com.vodafone.errorhandlling;
 
 import org.springframework.http.HttpStatus;
 
-public class NotFoundException extends APIException{
+public class NotFoundException extends APIException {
     public NotFoundException(String message) {
         super(message);
     }

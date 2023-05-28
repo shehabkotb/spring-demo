@@ -2,11 +2,13 @@ package com.vodafone.contoller;
 
 import com.vodafone.model.Article;
 import com.vodafone.service.ArticleService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,12 +16,8 @@ import java.util.List;
 @RequestMapping(value = "/v1")
 public class ArticlesController {
 
-    private final ArticleService articleService;
-
-
-    public ArticlesController(ArticleService articleService) {
-        this.articleService = articleService;
-    }
+    @Autowired
+    private ArticleService articleService;
 
     @GetMapping(value = "/articles", produces = {"application/json"})
     public ResponseEntity<List<Article>> getArticles(@RequestParam(name = "author", required = false) String author) {
@@ -39,13 +37,13 @@ public class ArticlesController {
     }
 
     @PostMapping(value = "/articles", produces = {"application/json"}, consumes = {"application/json"})
-    public ResponseEntity<Article> addArticle(@RequestBody Article article) {
+    public ResponseEntity<Article> addArticle(@Valid @RequestBody Article article) {
         article = articleService.addArticle(article);
         return new ResponseEntity<>(article, HttpStatus.CREATED);
     }
     @PutMapping(value = "/articles/{id}", produces = {"application/json"}, consumes = {"application/json"})
-    public ResponseEntity<Article> updateArticle(@PathVariable(name = "id") Integer id,@RequestBody Article article) {
-        article = articleService.updateArticle(id,article);
+    public ResponseEntity<Article> updateArticle(@PathVariable(name = "id") Integer id, @Valid @RequestBody(required = true) Article article) {
+        article = articleService.updateArticle(id, article);
         return new ResponseEntity<>(article, HttpStatus.OK);
     }
     @DeleteMapping(value = "/articles/{id}", produces = {"application/json"})

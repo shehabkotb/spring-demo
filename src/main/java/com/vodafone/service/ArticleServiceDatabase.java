@@ -1,9 +1,7 @@
 package com.vodafone.service;
 
-import com.vodafone.contoller.ArticlesControlerV3;
 import com.vodafone.contoller.ArticlesController;
 import com.vodafone.contoller.AuthorController;
-import com.vodafone.contoller.AuthorControllerV2;
 import com.vodafone.errorhandlling.NotFoundException;
 import com.vodafone.model.Article;
 import com.vodafone.model.Links;
@@ -25,9 +23,13 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Service
 @Qualifier("ArticleServiceDatabase")
 public class ArticleServiceDatabase implements ArticleService {
-    @Autowired
+
     ArticleRepository articleRepository;
 
+    @Autowired
+    public ArticleServiceDatabase(ArticleRepository articleRepository) {
+        this.articleRepository = articleRepository;
+    }
 
     @Override
     public List<Article> getAllArticles() {
@@ -66,14 +68,14 @@ public class ArticleServiceDatabase implements ArticleService {
         List<Links> links = new ArrayList<>();
         Links self = new Links();
 
-        Link selfLink = linkTo(methodOn(ArticlesControlerV3.class)
+        Link selfLink = linkTo(methodOn(ArticlesController.class)
                 .getArticle(article.getId())).withRel("self");
 
         self.setRel("self");
         self.setHref(selfLink.getHref());
 
         Links authorLink = new Links();
-        Link authLink = linkTo(methodOn(AuthorControllerV2.class)
+        Link authLink = linkTo(methodOn(AuthorController.class)
                 .getAuthorById(article.getAuthorId())).withRel("author");
         authorLink.setRel("author");
         authorLink.setHref(authLink.getHref());
